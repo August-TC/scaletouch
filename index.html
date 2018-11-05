@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>启动页</title>
+    <style type="text/css">
+        .processcontainer{
+            width:450px;
+            border:1px solid #999;
+            height:25px;
+        }
+        #processbar{
+            background:#999;
+            float:left;
+            height:100%;
+            text-align:center;
+            color: white;
+            line-height:150%;
+            opacity:0.8;
+        }
+    </style>
+</head>
+
+<body  style="background-image:url(img/a640.gif),url(img/bg.png);width: 100%;height: 100%;background-repeat:no-repeat; background-size:cover;background-attachment: fixed;">
+
+
+<!--<progress value="0" max="100" style="width: 450px;position: absolute;top:70%;left:50%;margin-left:-225px;z-index: 100">
+
+</progress>-->
+
+<div class="processcontainer" style="position: absolute;top:80%;left:50%;margin-left:-225px;">
+    <div id="processbar" style="width:0%;"></div>
+</div>
+<!--<canvas id="canvas" width="500" height="500" style="background:#000;"></canvas>-->
+
+</body>
+<script language="JavaScript">
+    function setProcess(){
+        var processbar = document.getElementById("processbar");
+        processbar.style.width = parseInt(processbar.style.width) + 1 + "%";
+        processbar.innerHTML = processbar.style.width;
+        if(processbar.style.width == "100%"){
+            window.clearInterval(bartimer);
+            window.location.href="content.html";
+        }
+    }
+    var bartimer = window.setInterval(function(){setProcess();},50);
+    window.onload = function(){
+        bartimer;
+    }
+
+
+    //window.setInterval("set_progress()",200);
+
+
+    /*function goprogress(){
+        var pro=document.getElementsByTagName("progress")[0];
+        gotoend(pro,0);
+    }
+
+    function gotoend(pro,value){
+        var value=value+1;
+        pro.value=value;
+        if(value<100) {
+            setTimeout(function(){gotoend(pro, value);},20)
+        }else{
+            //window.location.href="index.html";
+        }
+    }
+    window.onload=goprogress();*/
+
+
+
+
+</script>
+</html>

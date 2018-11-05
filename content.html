@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<!--
+	作者：谭诚、梁征明、苗露阳
+	时间：2018-09-30
+	描述：载乐俑图文展示
+-->
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+
+	<title>载乐俑</title>
+
+	<!--链接轮播图CSS样式 
+		<link rel="stylesheet" href="css/dist/swiper.min.css">-->
+
+	<!-- 链接页面主要CSS样式-->
+	<link rel="stylesheet" href="css/style.css" />
+
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="js/dist/pinch-zoom.umd.js"></script>
+</head>
+
+<body>
+
+	<!-- 包含有轮播图内容和图片的模块-->
+	<div id="main" class="core">
+
+		<!-- 用于暂停或继续播放音乐的按钮，位于屏幕右上角-->
+		<button onclick="stop()" id="but"></button>
+
+		<div class="slide">
+			<div class="adj" id="mainpic">
+				<img src="img/new.gif" height="60" class="header" />
+				<img id="id_pic" src="img/yong (1).png" class="main-pic" alt="" usemap="#map1" />
+			</div>
+
+			<div class="content">
+				<div id="page" class="content-part-up">
+					<div class='hint'>（转动并点击上图以查看详情）</div>
+				</div>
+
+				<div class="content-part-down">
+					<p id="intro" class="index-text" style="margin: 0 auto;">
+						一曲唱尽千年事，丝路新声复还回。
+					</p>
+					<p id="intro" class="index-text" style="margin: 0 auto;">
+						一尊昂首挺拔的骆驼，伫立在陕西历史博物馆展厅中，这里灯光幽暗，静谧无声。
+					</p>
+					<p id="intro" class="index-text" style="margin: 0 auto;">
+						骆驼背上，载着一支八人的歌舞乐队。七位乐手各执一乐器围坐一周，中间一位体态丰腴的女子，长身玉立，朱唇轻启。
+					</p>
+					<p id="intro" class="index-text" style="margin: 0 auto;">
+						一曲始自千年前盛唐时期的舞乐仿佛已悠然响起。
+					</p>
+					<p id="intro" class="index-text" style="margin: 0 auto;">
+						这支千年前的“巡回乐团”，正在举行一场流动的“街头演唱会”。这样的“巡回乐团”当年是否会出现在长安坊市？他们又如何穿越时光而来？他们奏的什么乐？唱的什么歌？
+					</p>
+					<p id="intro" class="index-text" style="margin: 0 auto;">
+						1959年，陕西省西安市西郊中堡村的唐墓中，这尊载乐俑被发现。它通高58厘米，长41厘米。被唐三彩凝固的瞬间，令人无限遐想。
+					</p>
+					<p id="intro" class="index-text" style="margin: 0 auto;">
+						自从张骞通西域，开辟丝绸之路后，中国内地与中亚、西亚和欧洲的交流就以此为动脉，相互输入。乐俑所持乐器基本出自西域，而演奏及舞蹈者皆为汉人。西安音乐学院教授曾金寿说，他们演奏和歌唱的，很可能是流行于开元天宝年间的“胡部新声”。
+					</p>
+					<p id="intro" class="index-text" style="margin: 0 auto;">
+						胡部新声有别于纯粹的胡舞，传自河西少数民族地区。在唐代西域的西凉、高昌、龟兹、疏勒等地民族音乐已十分成熟。经改造传入长安后，立即受到人们喜爱。唐玄宗开元二十四年(736年)“升胡部于堂上”，后又专门下诏，令“道调、法曲与胡部新声合作”。胡部新声在长安风靡一时。
+					</p>
+					<p id="intro" class="index-text" style="margin: 0 auto;">
+						这组载乐俑上的“巡回乐团”，凝固了西域与中原在艺术领域的融合，见证了丝绸之路上文化的传承与发展。
+					</p>
+				</div>
+			</div>
+
+			<!--<div class="content-part-down">
+					<p id="intro" class="index-text" style="margin: 0 auto;">
+						三彩骆驼载乐俑为唐朝的文物，1959年出土于陕西省西安市西郊中堡村唐墓，通高58厘米，长41厘米。现收藏于陕西历史博物馆。
+					</p>
+				</div>-->
+		</div>
+	</div>
+
+	<!-- 用于播放音乐的隐藏区域 -->
+	<!-- 音乐的播放由轮播图中的点击区域和按钮实现 -->
+	<div id="voice"></div>
+</body>
+
+<script src="js/ImgZoom.js"></script>
+<script type="text/javascript">
+	var flag = 1;
+	var click = 0;
+	var cntTimer = null;
+
+	$(document).ready(function () {
+		var el = document.querySelector('#ImgZoomInImage');
+		new PinchZoom.default(el, {});
+	});
+
+	$("#mainpic").on("touchstart", function (e) {
+		e.preventDefault();
+		startX = e.originalEvent.changedTouches[0].pageX;
+		startY = e.originalEvent.changedTouches[0].pageY;
+	});
+	$("#mainpic").on("touchmove", function (e) {
+		e.preventDefault();
+		moveEndX = e.originalEvent.changedTouches[0].pageX;
+		moveEndY = e.originalEvent.changedTouches[0].pageY;
+		X = moveEndX - startX;
+		Y = moveEndY - startY;
+
+		if (Math.abs(X) > Math.abs(Y) && Math.abs(X) > 10 && X > 0) {
+			//alert("left 2 right");
+
+			if (flag < 24) {
+				flag++;
+				//alert(flag);
+				$("#id_pic").attr("src", "img/yong (" + flag.toString() + ").png");
+				$("#id_pic").attr("usemap", "#map" + flag.toString());
+				//                      flagChange();
+			} else {
+				flag = 1;
+				//alert(flag);
+				$("#id_pic").attr("src", "img/yong (" + flag.toString() + ").png");
+				$("#id_pic").attr("usemap", "#map" + flag.toString());
+			}
+
+		} else if (Math.abs(X) > Math.abs(Y) && Math.abs(X) > 10 && X < 0) {
+			//alert("right 2 left");
+			if (flag > 1) {
+				flag--;
+				//alert(flag);
+				$("#id_pic").attr("src", "img/yong (" + flag.toString() + ").png");
+				$("#id_pic").attr("usemap", "#map" + flag.toString());
+				//                      flagChange();
+			} else {
+				flag = 24;
+				//alert(flag);
+				$("#id_pic").attr("src", "img/yong (" + flag.toString() + ").png");
+				$("#id_pic").attr("usemap", "#map" + flag.toString());
+			}
+		} else {
+			//					alert("click");
+		}
+	});
+	$("#mainpic").on("touchend", function (e) {
+		e.preventDefault();
+		moveEndX = e.originalEvent.changedTouches[0].pageX;
+		moveEndY = e.originalEvent.changedTouches[0].pageY;
+		X = moveEndX - startX;
+		Y = moveEndY - startY;
+		document.getElementById("page").innerHTML = "<div class='hint'>（转动并点击上图以查看详情）</div>"
+
+		click++;
+		clearTimeout(cntTimer);
+		cntTimer = setTimeout(() => {
+			console.log("SGClick");
+			click = 0;
+
+			if (Math.abs(X) < 10) {
+				//					alert("click");
+
+				var file_name = "null";
+				switch (flag) {
+					case 1:
+						file_name = "04guanzi.mp3";
+						break;
+					case 2:
+						file_name = "04guanzi.mp3";
+						break;
+					case 3:
+						file_name = "07zhuguan.mp3";
+						break;
+					case 4:
+						file_name = "07zhuguan.mp3";
+						break;
+					case 5:
+						file_name = "07zhuguan.mp3";
+						break;
+					case 6:
+						file_name = "06sheng.mp3";
+						break;
+
+					case 7:
+						file_name = "06sheng.mp3";
+						break;
+					case 8:
+						file_name = "06sheng.mp3";
+						break;
+					case 9:
+						file_name = "06sheng.mp3";
+						break;
+					case 10:
+						file_name = "03pipa.mp3";
+						break;
+					case 11:
+						file_name = "03pipa.mp3";
+						break;
+					case 12:
+						file_name = "03pipa.mp3";
+						break;
+					case 13:
+						file_name = "03pipa.mp3";
+						break;
+					case 14:
+						file_name = "05hengdi.mp3";
+						break;
+					case 15:
+						file_name = "05hengdi.mp3";
+						break;
+					case 16:
+						file_name = "05hengdi.mp3";
+						break;
+					case 17:
+						file_name = "02paixiao.mp3";
+
+						break;
+					case 18:
+						file_name = "02paixiao.mp3";
+
+						break;
+					case 19:
+						file_name = "02paixiao.mp3";
+
+						break;
+					case 20:
+						file_name = "02paixiao.mp3";
+
+						break;
+					case 21:
+						file_name = "01konghou.mp3";
+						break;
+					case 22:
+						file_name = "01konghou.mp3";
+						break;
+					case 23:
+						file_name = "01konghou.mp3";
+						break;
+					case 24:
+						file_name = "04guanzi.mp3";
+						break;
+					default:
+						break;
+				}
+				playVoice('sound/' + file_name, flag);
+			}
+		}, 300);
+		if (click > 1) {
+			console.log("DBClick");
+			clearTimeout(cntTimer);
+			click = 0;
+
+			// console.log($(id_pic).attr('src'))
+			$(id_pic).ImgZoomIn();
+		}
+
+	});
+
+	$(document).on('touchend', '#ImgZoomInBG', function (t) {
+		$('#ImgZoomInImage').hide();
+		$('#ImgZoomInBG').hide();
+		// document.ontouchstart = function () {
+		// 	return true;
+		// }
+		t.preventDefault();
+	});
+	$(document).on('touchend', '#ImgZoomInImage', function (t) {
+		$('#ImgZoomInImage').hide();
+		$('#ImgZoomInBG').hide();
+		// document.ontouchstart = function () {
+		// 	return true;
+		// }
+		t.preventDefault();
+	});
+
+	/*
+	 *file 音频文件
+	 *person 人偶代码
+	 * */
+
+	function playVoice(file, person) { //对点击事件进行处理
+		if (file != 'null') { //除第一张图外
+			//播放音乐
+			document.getElementById("voice").innerHTML =
+				'<audio controls="controls" autoplay="autoplay" id="audio_player" style="display:none"> <source src="' + file +
+				'" > </audio>';
+			document.getElementById("but").style.background = "url('img/laba.png')";
+			document.getElementById("but").style.display = "block";
+		}
+
+		var br = '<div style="visibility: hidden;font: 0.1px;">content</div>'
+		var str_prev = '<div class="content-part-pic">';
+		var str_next =
+			'</div><div class="content-part-txt"><p id="info" style="margin: 10px; text-indent: 2em; text-align: left;" class="index-text">content</p></div>' +
+			br
+
+		//根据人偶不同调整页面内容
+		switch (person) {
+			case 1:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/guanzi.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/04guanzi.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'古称筚篥，汉代自龟兹传来，音色雄厚，常用于表现边塞离别的之情。今民乐管弦乐队仍有使用。可用来独奏、合奏和伴奏。经过变化发展，管子的演奏技艺得到了不断丰富和发展。而广泛流行于中国民间，成为北方人民喜爱的常用乐器。';
+				break;
+			case 2:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_6.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/04guanzi.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 3:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/paixiao2.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/07zhuguan.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'竹管，指箫笛一类的竹制管乐器。《书序》“王又升孔子堂，闻金石丝竹之音，乃不坏宅” 唐 孔颖达 疏：“又升孔子庙堂，闻金钟、石磬、丝琴、竹管之音，以惧其神异乃止，不复敢坏宅也。”';
+				break;
+			case 4:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/paixiao2.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/07zhuguan.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'竹管，指箫笛一类的竹制管乐器。《书序》“王又升孔子堂，闻金石丝竹之音，乃不坏宅” 唐 孔颖达 疏：“又升孔子庙堂，闻金钟、石磬、丝琴、竹管之音，以惧其神异乃止，不复敢坏宅也。”';
+				break;
+			case 5:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_7.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/07zhuguan.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 6:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/sheng.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/06sheng.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'笙，中原乐器，自周以来存在至今，19世纪下半叶传到欧洲对风琴等乐器有所影响。是我国古老的簧管乐器，一般用十三根长短不同的竹管制成，用于吹奏。它由笙簧、笙笛、笙斗三个部分组成，由笙簧振动引起笙笛内的空气振动而发音。在现代国乐团，笙可以担当旋律或伴奏的作用。';
+				break;
+			case 7:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/sheng.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/06sheng.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'笙，中原乐器，自周以来存在至今，19世纪下半叶传到欧洲对风琴等乐器有所影响。是我国古老的簧管乐器，一般用十三根长短不同的竹管制成，用于吹奏。它由笙簧、笙笛、笙斗三个部分组成，由笙簧振动引起笙笛内的空气振动而发音。在现代国乐团，笙可以担当旋律或伴奏的作用。';
+				break;
+			case 8:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_1.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/06sheng.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 9:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_1.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/06sheng.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 10:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_2.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/03pipa.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 11:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/pipa.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/03pipa.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'琵琶，自汉代传入的波斯乐器，西汉文献有记载。这一件是四弦曲项琵琶。最早被称为“琵琶”的乐器大约在中国秦朝出现。“琵琶”二字中的“珏”意为“二玉相碰，发出悦耳碰击声”，表示这是一种以弹碰琴弦的方式发声的乐器。到了唐代琵琶的发展出现了一个高峰。当时上至宫廷乐队, 下至民间演唱都少不了琵琶, 随成为当时非常盛行的乐器, 而且在乐队处于领奏地位';
+				break;
+			case 12:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/pipa.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/03pipa.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'琵琶，自汉代传入的波斯乐器，西汉文献有记载。这一件是四弦曲项琵琶。最早被称为“琵琶”的乐器大约在中国秦朝出现。“琵琶”二字中的“珏”意为“二玉相碰，发出悦耳碰击声”，表示这是一种以弹碰琴弦的方式发声的乐器。到了唐代琵琶的发展出现了一个高峰。当时上至宫廷乐队, 下至民间演唱都少不了琵琶, 随成为当时非常盛行的乐器, 而且在乐队处于领奏地位。';
+				break;
+			case 13:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_2.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/03pipa.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 14:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/hengdi.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/05hengdi.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'横笛也称笛子。相传汉武帝时张骞出使西域以后输入长安。唐代称横吹，是没有笛膜的。唐代只有箫管上才有膜，宋元以后这膜就移至横笛上，而箫管就不再贴膜了。虽然，其来自中原还是西域目前仍有争议，但它的声音清脆、高亢、透明而圆润，独奏、合奏均具特色，表现力丰富，故深受人们喜爱。';
+				break;
+			case 15:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/hengdi.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/05hengdi.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'横笛也称笛子。相传汉武帝时张骞出使西域以后输入长安。唐代称横吹，是没有笛膜的。唐代只有箫管上才有膜，宋元以后这膜就移至横笛上，而箫管就不再贴膜了。虽然，其来自中原还是西域目前仍有争议，但它的声音清脆、高亢、透明而圆润，独奏、合奏均具特色，表现力丰富，故深受人们喜爱。';
+				break;
+			case 16:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_3.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/05hengdi.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 17:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/paixiao.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/02paixiao.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'排箫，传统乐器，迄今发现的世界上最早的排箫，是距今3000年的中国西周初期的骨排箫。排箫是由一系列管子构成的管乐器，管子都是按由长到短或由短到长的顺序排列，并且把它们并排联接在一起，管子的底部都用塞子堵住，构成一个个独立的吹管，吹奏时，气流进入管中，可以产生高低不同的音调。排箫的音色纯美，轻柔细腻、空灵飘逸。排箫这种乐器既可以独奏又可以合奏。';
+
+				break;
+			case 18:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/paixiao.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/02paixiao.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'排箫，传统乐器，迄今发现的世界上最早的排箫，是距今3000年的中国西周初期的骨排箫。排箫是由一系列管子构成的管乐器，管子都是按由长到短或由短到长的顺序排列，并且把它们并排联接在一起，管子的底部都用塞子堵住，构成一个个独立的吹管，吹奏时，气流进入管中，可以产生高低不同的音调。排箫的音色纯美，轻柔细腻、空灵飘逸。排箫这种乐器既可以独奏又可以合奏。';
+				break;
+			case 19:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_4.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/02paixiao.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 20:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_4.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/02paixiao.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 21:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_5.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/01konghou.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 22:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/konghou.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/01konghou.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'箜篌，汉代时自波斯传入，在宫廷雅乐中一直存在。又称角形箜篌。是竖箜篌之一种，属于竖箜篌中的较小者。历史久远，结构简单，造型美观，使用方便。长期流传于宫廷和民间，清代失传。20世纪30年代得以复兴，80年代推陈出新，造型各异的小箜篌登上我国和世界音乐舞台，用于独奏、合奏或伴奏之中。';
+				break;
+			case 23:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/renou_5.jpg" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/01konghou.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText = '介绍';
+				break;
+			case 24:
+				document.getElementById("page").innerHTML = str_prev +
+					'<img src="img/guanzi.png" height="100" style="vertical-align: middle;" onclick= "playVoice(\'sound/04guanzi.mp3\',0)"/>' +
+					str_next;
+				document.getElementById("info").innerText =
+					'古称筚篥，汉代自龟兹传来，音色雄厚，常用于表现边塞离别的之情。今民乐管弦乐队仍有使用。可用来独奏、合奏和伴奏。经过变化发展，管子的演奏技艺得到了不断丰富和发展。而广泛流行于中国民间，成为北方人民喜爱的常用乐器。';
+				break;
+			default:
+				break;
+		}
+
+	}
+	//控制音乐暂停
+	function stop() {
+		var music = document.getElementById("audio_player");
+		if (music.paused) {
+			music.play();
+
+			document.getElementById("but").style.background = "url('img/laba.png')";
+		} else {
+			music.pause();
+			document.getElementById("but").style.background = "url('img/jingyin.png')";
+		}
+
+	}
+</script>
+
+
+</html>
